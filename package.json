@@ -1,0 +1,24 @@
+{
+  "name": "social-media-app",
+  "version": "1.0.0",
+  "description": "Social media application for interview.\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[Djob \u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[interview.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/faraimathemera/Development-Assessment.git"
+  },
+  "keywords": [
+    "Social-media",
+    "assessment",
+    "development"
+  ],
+  "author": "Farai Mathemera",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/faraimathemera/Development-Assessment/issues"
+  },
+  "homepage": "https://github.com/faraimathemera/Development-Assessment#readme"
+}
