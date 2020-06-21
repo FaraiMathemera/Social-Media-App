@@ -1,0 +1,101 @@
+<div class="container">
+
+  <%# App  %>
+    <div class="row">
+      <div class="col-12">
+        <h1 class="mt-4">Friendster</h1>
+      </div>
+    </div>
+
+  <%# Header %>
+  <div class="row">
+    <div class="col">
+      <a href="/profile"><h1 class="mt-4">Profile</h1></a>
+    </div>
+    <div class="col-6">
+      <a href="/friends"><h1 class="mt-4">Friends</h1></a>
+    </div>
+    <div class="col">
+      <a href="/users/logout"><h1 class="mt-4">Log Out</h1></a>
+    </div>
+  </div>
+
+<%# content %>
+<div class = 'row'>
+  <div class="col-12">
+  <%- include ("./partials/messages"); -%>
+    <form class="form-horizontal" action="/users/profile/edit" method="POST">
+
+      <%# profile picture %>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-12">
+        <label class="control-label col-sm-2" for="imageProfile">Profile Picture</label>
+        </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+          <label class="control-label col-sm-2" for="imageProfile"><%= imageProfile %></label>
+        </div>
+        </div>
+      </div>
+
+      <%# Name %>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-4">
+            <label class="control-label col-sm-2" for="name">Name: </label>
+          </div>
+          <div class="col-8">
+            <label class="control-label col-sm-2" for="name"><%= name %></label>
+          </div>
+        </div>
+      </div>
+
+      <%# Surname %>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-4">
+            <label class="control-label col-sm-2" for="surname">Surname: </label>
+          </div>
+          <div class="col-8">
+            <label class="control-label col-sm-2" for="surname"><%= surname %></label>
+          </div>
+        </div>
+      </div>
+
+      <%# Email %>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-4">
+            <label class="control-label col-sm-2" for="age">Email: </label>
+          </div>
+          <div class="col-8">
+            <label class="control-label col-sm-2" for="email"><%= email %></label>
+          </div>
+        </div>
+      </div>
+
+      <%# Age %>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-4">
+            <label class="control-label col-sm-2" for="age">Age: </label>
+          </div>
+          <div class="col-8">
+            <label class="control-label col-sm-2" for="imageProfile"><%= age %></label>
+          </div>
+        </div>
+      </div>
+
+      <%# form footer %>
+      <div class="row">
+        <div class="col-12">
+        <a href="/dashboard"><h3 class="mt-4">Edit Profile</h3></a>
+        </div>
+      </div>
+    </form>
+</div>
+</div>
+
+</div>

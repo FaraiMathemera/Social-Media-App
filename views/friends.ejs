@@ -1,0 +1,59 @@
+<div class="container">
+
+  <%# App  %>
+    <div class="row">
+      <div class="col-12">
+        <h1 class="mt-4">Friendster</h1>
+      </div>
+    </div>
+
+    <%# Header %>
+    <div class="row">
+      <div class="col">
+        <a href="/profile"><h1 class="mt-4">Profile</h1></a>
+      </div>
+      <div class="col-6">
+        <a href="/friends"><h1 class="mt-4">Friends</h1></a>
+      </div>
+      <div class="col">
+        <a href="/users/logout"><h1 class="mt-4">Log Out</h1></a>
+      </div>
+    </div>
+
+<%# content %>
+
+<%# Search Bar %>
+<div class = 'row'>
+  <div class="col-12">
+  <%- include ("./partials/messages"); -%>
+  <form class="form-inline mr-auto mb-4" action="/users/friends/results" method="POST">
+    <div class="input-group col-md-11">
+            <input class="form-control py-2 border-right-0 border" type="search" value="search" id="search" name="search">
+            <span class="input-group-append">
+              <button class="btn btn-outline-secondary border-left-0 border" type="submit">
+                    <i class="fa fa-search"></i>
+              </button>
+            </span>
+        </div>
+  </form>
+</div>
+</div>
+
+<%# List of Friends %>
+<div class = 'row'>
+  <div class="col-12">
+  <%- include ("./partials/messages"); -%>
+  <div class="form-group">
+    <div class="row">
+      <div class="col-4">
+        <label class="control-label col-sm-2" for="name">Name: </label>
+      </div>
+      <div class="col-8">
+        <label class="control-label col-sm-2" for="name"><%= friends %></label>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
