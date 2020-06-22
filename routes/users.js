@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+
 //user model
 let User = require('../models/User');
 
@@ -18,11 +19,11 @@ router.get('/dashboard/edit', (req,res) => res.render('dashboard'));
 router.get('/profile/edit', (req,res) => res.render('profile'));
 
 //Dashboard Page
-router.get('/friends', (req,res) => res.render('friends'));
+router.get('/friends/edit', (req,res) => res.render('friends'));
 
 //Register handle
 router.post('/register', (req, res) => {
-const {name, surname, age, email, password, password2} = req.body;
+const {name, surname, age, email, password, password2, friends} = req.body;
 let errors =[];
 //Check required fields
 if(!name||!surname||!email||!password||!password2){
@@ -70,7 +71,8 @@ const newUser = new User({
   surname,
   age,
   email,
-  password
+  password,
+  friends
 });
 
 //hash password
@@ -130,14 +132,23 @@ console.log(query);
 router.post('/friends/:id',(req, res) =>{
 var item = {_id, name, surname, age, email, imageProfile, friends} = req.body;
 let errors =[];
-let query = {_id:req.body.search}
+let results = [];
+let query = {name:req.body.search}
 
-
-User.find(query,{$set:item}, {multi: true},function(err, result){
-req.flash('success_msg', 'Successful!!');
-res.redirect('/users/friends/edit');
-console.log(query);
-});
+// User.find(query,function(err, results) {
+//             if (err) {
+//                 return res.send(500, err);
+//             }
+//             req.flash('friends', 'List of friends');
+//             res.redirect('/users/friends/edit');
+//             console.log(results);
+//
+//             // res.render('friends', {
+//             //     title: 'Friend Connect | Results',
+//             //     searchResults: results
+//             // });
+//
+//         });
 });
 //Search function ---------------------------------------------
 

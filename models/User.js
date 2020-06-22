@@ -1,4 +1,14 @@
 const mongoose = require('mongoose');
+var ObjectId = require('mongodb').ObjectID;
+
+const FriendSchema = new mongoose.Schema({
+  friend: {type: [{
+    id:     {type: ObjectId},
+    name:   {type: String , default: "James"},
+    surname:  {type: String, default: "Bond" },
+    status:   {type: String , default: "Online"}
+  }]}
+});
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -26,8 +36,7 @@ const UserSchema = new mongoose.Schema({
     required: false
   },
   friends: {
-    type: [String],
-    required: false
+    type: [FriendSchema]
   },
   date: {
     type: String,

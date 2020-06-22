@@ -1,24 +1,6 @@
-<div class="container">
-
-  <%# App  %>
-    <div class="row">
-      <div class="col-12">
-        <h1 class="mt-4">Friendster</h1>
-      </div>
-    </div>
-
-  <%# Header %>
-  <div class="row">
-    <div class="col">
-      <h1 class="mt-4">Profile</h1>
-    </div>
-    <div class="col-6">
-      <h1 class="mt-4">Home</h1>
-    </div>
-    <div class="col">
-      <a href="/users/logout"><h1 class="mt-4">Log Out</h1></a>
-    </div>
-  </div>
+<%# Header %>
+<%- include("./partials/banner"); -%>
+<%- include("./partials/nav"); -%>
 
 <%# content %>
 <div class = 'row'>
@@ -155,6 +137,4 @@
       </div>
     </form>
 </div>
-</div>
-
 </div>

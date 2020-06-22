@@ -1,24 +1,7 @@
-<div class="container">
+<%# Header %>
 
-  <%# App  %>
-    <div class="row">
-      <div class="col-12">
-        <h1 class="mt-4">Friendster</h1>
-      </div>
-    </div>
-
-    <%# Header %>
-    <div class="row">
-      <div class="col">
-        <a href="/profile"><h1 class="mt-4">Profile</h1></a>
-      </div>
-      <div class="col-6">
-        <a href="/friends"><h1 class="mt-4">Friends</h1></a>
-      </div>
-      <div class="col">
-        <a href="/users/logout"><h1 class="mt-4">Log Out</h1></a>
-      </div>
-    </div>
+<%- include("./partials/banner"); -%>
+<%- include("./partials/nav"); -%>
 
 <%# content %>
 
@@ -28,7 +11,7 @@
   <%- include ("./partials/messages"); -%>
   <form class="form-inline mr-auto mb-4" action="/users/friends/results" method="POST">
     <div class="input-group col-md-11">
-            <input class="form-control py-2 border-right-0 border" type="search" value="search" id="search" name="search">
+            <input class="form-control py-2 border-right-0 border" type="search" placeholder="search" id="search" name="search">
             <span class="input-group-append">
               <button class="btn btn-outline-secondary border-left-0 border" type="submit">
                     <i class="fa fa-search"></i>
@@ -39,21 +22,29 @@
 </div>
 </div>
 
+
+
+
+<div class="form-group" style="display:none">
+  <label class="control-label col-sm-2" for="_id">ID</label>
+  <div class="col-sm-10">
+  <input
+    type="_id"
+    id="_id"
+    name="_id"
+    class="form-control"
+    value="<%= _id %>"
+  />
+  </div>
+</div>
+
 <%# List of Friends %>
 <div class = 'row'>
   <div class="col-12">
-  <%- include ("./partials/messages"); -%>
   <div class="form-group">
     <div class="row">
-      <div class="col-4">
-        <label class="control-label col-sm-2" for="name">Name: </label>
-      </div>
-      <div class="col-8">
-        <label class="control-label col-sm-2" for="name"><%= friends %></label>
-      </div>
+      <%- include("./partials/friends"); -%>
     </div>
   </div>
 </div>
-</div>
-
 </div>

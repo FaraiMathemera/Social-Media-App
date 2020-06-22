@@ -1,24 +1,7 @@
-<div class="container">
-
-  <%# App  %>
-    <div class="row">
-      <div class="col-12">
-        <h1 class="mt-4">Friendster</h1>
-      </div>
-    </div>
 
   <%# Header %>
-  <div class="row">
-    <div class="col">
-      <a href="/profile"><h1 class="mt-4">Profile</h1></a>
-    </div>
-    <div class="col-6">
-      <a href="/friends"><h1 class="mt-4">Friends</h1></a>
-    </div>
-    <div class="col">
-      <a href="/users/logout"><h1 class="mt-4">Log Out</h1></a>
-    </div>
-  </div>
+  <%- include("./partials/banner"); -%>
+  <%- include("./partials/nav"); -%>
 
 <%# content %>
 <div class = 'row'>
@@ -96,6 +79,4 @@
       </div>
     </form>
 </div>
-</div>
-
 </div>
