@@ -10,7 +10,7 @@ router.get('/profile', ensureAuthenticated, (req,res) => res.render('profile',
 {_id: req.user._id, name: req.user.name, surname: req.user.surname, email: req.user.email, age: req.user.age, imageProfile: req.user.imageProfile, friends: req.user.friends}));
 
 router.get('/friends', ensureAuthenticated, (req,res) => res.render('friends',
-{_id: req.user._id, name: req.user.name, surname: req.user.surname, email: req.user.email, age: req.user.age, imageProfile: req.user.imageProfile, friends: req.user.friends}));
+{_id: req.user._id, name: req.user.name, surname: req.user.surname, email: req.user.email, age: req.user.age, imageProfile: req.user.imageProfile, friends: req.user.friends, friendRequest: req.user.friendRequest}));
 
 router.get('/password', ensureAuthenticated, (req,res) => res.render('password',
 {_id: req.user._id, name: req.user.name, surname: req.user.surname, email: req.user.email, age: req.user.age, imageProfile: req.user.imageProfile, friends: req.user.friends, password: req.user.password}));

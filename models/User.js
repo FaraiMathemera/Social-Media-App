@@ -10,6 +10,14 @@ const FriendSchema = new mongoose.Schema({
   }]}
 });
 
+const FriendRequestSchema = new mongoose.Schema({
+  friend: {type: [{
+    id:     {type: ObjectId},
+    name:   {type: String , default: "James"},
+    surname:  {type: String, default: "Bond" }
+  }]}
+});
+
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -36,7 +44,16 @@ const UserSchema = new mongoose.Schema({
     required: false
   },
   friends: {
-    type: [FriendSchema]
+    type: [FriendSchema],
+    required: true
+  },
+  friendRequest: {
+    type: [FriendRequestSchema],
+    required: true
+  },
+  status: {
+    type: Boolean,
+    required: false
   },
   date: {
     type: String,
