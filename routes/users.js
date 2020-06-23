@@ -22,9 +22,9 @@ router.get('/profile/edit', (req,res) => res.render('profile'));
 router.get('/friends/edit', (req,res) => res.render('friends'));
 
 //Change password Page
-router.get('/password', (req,res) => res.render('password'));
+router.get('/password/edit', (req,res) => res.render('password'));
 
-//Register handle
+//Register handle ----------------------------------------------------------------------------------
 router.post('/register', (req, res) => {
 const {name, surname, age, email, password, password2, friends} = req.body;
 let errors =[];
@@ -38,8 +38,23 @@ if (password != password2){
 }
 
 //Check password length
-if(password.length< 8){
-  errors.push({msg: 'Password should be at least 8 characters'});
+if(password.length< 6){
+  errors.push({msg: 'Password should be at least 6 characters'});
+}
+
+//Check for  upper and lower case character
+if(password.search(/[\[\]?=.*[a-zA-Z]/) == -1){
+  errors.push({msg: 'Password should contain an upper and lower case character'});
+}
+
+//Check for a number
+if(password.search(/[\[\]?=.*[0-9]/) == -1){
+  errors.push({msg: 'Password should contain a number'});
+}
+
+//Check for a special character
+if(password.search(/[\[\]?=.*[!@#$%^&*]/) == -1){
+  errors.push({msg: 'Password should contain a special character'});
 }
 
 if (errors.length>0){
@@ -97,49 +112,81 @@ bcrypt.genSalt(10,(err, salt) =>
 
 }
 });
-//Registar handle
+//Register handle ---------------------------------------------------------------------------------------------------------------
 
-//Change Password handle
-router.post('/password', (req, res) => {
-const {password, password1, password2} = req.body;
+//Change Password handle --------------------------------------------------------------------------------------------------------
+router.post('/password/:id', (req, res) => {
+var item = {_id, password, oldpassword, password1, password2} = req.body;
 let errors =[];
+let query = {_id:req.body._id}
 //Check required fields
-if(!password||!password1||!password2){
+if(!oldpassword||!password1||!password2){
   errors.push({msg: 'Please fill in all the fields'});
+  console.log("Please fill in all the fields");
 }
 //Check new passwords
 if (password1 != password2){
   errors.push({msg: 'Passwords do not match'});
+  console.log("Passwords do not match");
 }
 
 //Check old password
-if (password != password2){
-  errors.push({msg: 'Incorrect Password'});
+bcrypt.compare(oldpassword, password, function(err, result) {
+    // result == true
+    if (result != true){
+      errors.push({msg: 'Incorrect Password'});
+      console.log("Incorrect Password");
 }
+});
 
 //Check password length
-if(password.length< 8){
-  errors.push({msg: 'Password should be at least 8 characters'});
+if(password1.length< 6){
+  errors.push({msg: 'Password should be at least 6 characters'});
+  console.log("> 6");
 }
 
-if (errors.length>0){
-res.render('password', {
-  password,
-  password1,
-  password2
-});
+//Check for  upper and lower case character
+if(password1.search(/[\[\]?=.*[a-zA-Z]/) == -1){
+  errors.push({msg: 'Password should contain an upper and lower case character'});
+  console.log("Lower and upper");
+}
+
+//Check for a number
+if(password1.search(/[\[\]?=.*[0-9]/) == -1){
+  errors.push({msg: 'Password should contain a number'});
+  console.log("number");
+}
+
+//Check for a special character
+if(password1.search(/[\[\]?=.*[!@#$%^&*]/) == -1){
+  errors.push({msg: 'Password should contain a special character'});
+  console.log("special");
+}
+
+
+ if (errors.length>0){
+ res.render('password', {
+   _id,
+   errors,
+   password,
+   oldpassword,
+   password1,
+   password2
+ });
+
 }else {
 
 //hash password
   bcrypt.genSalt(10,(err, salt) =>
-   bcrypt.hash(newUser.password1, salt, (err, hash) => {
+   bcrypt.hash(password1, salt, (err, hash) => {
      if(err) throw err;
   //save password hash
-     newUser.password = hash;
-     newUser.save()
-       .then(user =>{
+  //password1 = hash;
+
+     User.updateOne(query,{$set:{"password":hash}}, {multi: true},function(err, result){
          req.flash('success_msg', 'You have successfully updated your password');
-         res.redirect('/users/dashboard');
+         res.redirect('/users/password/edit');
+         console.log("Password Changed");
        })
        .catch(err => console.log(err));
 
@@ -148,9 +195,9 @@ res.render('password', {
 
 }
 });
-//Change password handle
+//Change password handle ------------------------------------------------------------------------------------------------------------------
 
-//Dashboard handle -----------------------------------------------
+//Dashboard handle ------------------------------------------------------------------------------------------------------------------------
 router.post('/dashboard/:id',(req, res) =>{
 var item = {_id, name, surname, age, email, imageProfile, friends} = req.body;
 let errors =[];

@@ -11,4 +11,7 @@ router.get('/profile', ensureAuthenticated, (req,res) => res.render('profile',
 
 router.get('/friends', ensureAuthenticated, (req,res) => res.render('friends',
 {_id: req.user._id, name: req.user.name, surname: req.user.surname, email: req.user.email, age: req.user.age, imageProfile: req.user.imageProfile, friends: req.user.friends}));
+
+router.get('/password', ensureAuthenticated, (req,res) => res.render('password',
+{_id: req.user._id, name: req.user.name, surname: req.user.surname, email: req.user.email, age: req.user.age, imageProfile: req.user.imageProfile, friends: req.user.friends, password: req.user.password}));
 module.exports=router;
