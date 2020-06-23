@@ -18,8 +18,11 @@ router.get('/dashboard/edit', (req,res) => res.render('dashboard'));
 //Dashboard Page
 router.get('/profile/edit', (req,res) => res.render('profile'));
 
-//Dashboard Page
+//Friends Page
 router.get('/friends/edit', (req,res) => res.render('friends'));
+
+//Change password Page
+router.get('/password', (req,res) => res.render('password'));
 
 //Register handle
 router.post('/register', (req, res) => {
@@ -94,6 +97,58 @@ bcrypt.genSalt(10,(err, salt) =>
 
 }
 });
+//Registar handle
+
+//Change Password handle
+router.post('/password', (req, res) => {
+const {password, password1, password2} = req.body;
+let errors =[];
+//Check required fields
+if(!password||!password1||!password2){
+  errors.push({msg: 'Please fill in all the fields'});
+}
+//Check new passwords
+if (password1 != password2){
+  errors.push({msg: 'Passwords do not match'});
+}
+
+//Check old password
+if (password != password2){
+  errors.push({msg: 'Incorrect Password'});
+}
+
+//Check password length
+if(password.length< 8){
+  errors.push({msg: 'Password should be at least 8 characters'});
+}
+
+if (errors.length>0){
+res.render('password', {
+  password,
+  password1,
+  password2
+});
+}else {
+
+//hash password
+  bcrypt.genSalt(10,(err, salt) =>
+   bcrypt.hash(newUser.password1, salt, (err, hash) => {
+     if(err) throw err;
+  //save password hash
+     newUser.password = hash;
+     newUser.save()
+       .then(user =>{
+         req.flash('success_msg', 'You have successfully updated your password');
+         res.redirect('/users/dashboard');
+       })
+       .catch(err => console.log(err));
+
+   }))
+
+
+}
+});
+//Change password handle
 
 //Dashboard handle -----------------------------------------------
 router.post('/dashboard/:id',(req, res) =>{
