@@ -182,8 +182,15 @@ if(password1.search(/[\[\]?=.*[!@#$%^&*]/) == -1){
      if(err) throw err;
   //save password hash
   //password1 = hash;
+  const friends = {
+          friend: {
+              name: "Jane",
+              surname: "Doe",
+              status: true
+          }
+      };
 
-     User.updateOne(query,{$set:{"password":hash}}, {multi: true},function(err, result){
+     User.updateOne(query,{$set:{"password":hash,"friends":friends}}, {multi: true},function(err, result){
          req.flash('success_msg', 'You have successfully updated your password');
          res.redirect('/users/password/edit');
          console.log("Password Changed");
