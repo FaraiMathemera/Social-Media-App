@@ -24,9 +24,12 @@ router.get('/friends/edit', (req,res) => res.render('friends'));
 //Change password Page
 router.get('/password/edit', (req,res) => res.render('password'));
 
+//Search Page
+router.get('/friends/results', (req,res) => res.render('friends'));
+
 //Register handle ----------------------------------------------------------------------------------
 router.post('/register', (req, res) => {
-const {name, surname, age, email, password, password2, friends} = req.body;
+const {name, surname, age, email, password, password2, friends, friendRequests, searchResults, imageProfile, status} = req.body;
 let errors =[];
 //Check required fields
 if(!name||!surname||!email||!password||!password2){
@@ -90,7 +93,11 @@ const newUser = new User({
   age,
   email,
   password,
-  friends
+  friends,
+  friendRequests,
+  imageProfile,
+  searchResults,
+  status
 });
 
 //hash password
@@ -184,6 +191,8 @@ if(password1.search(/[\[\]?=.*[!@#$%^&*]/) == -1){
   //password1 = hash;
   const friends = {
           friend: {
+              id: "",
+              imageProfile:"",
               name: "Jane",
               surname: "Doe",
               status: true
@@ -241,23 +250,46 @@ console.log(query);
 router.post('/friends/:id',(req, res) =>{
 var item = {_id, name, surname, age, email, imageProfile, friends} = req.body;
 let errors =[];
-let results = [];
+let searchResults = [];
+let queryUser = {_id:req.body._id}
 let query = {name:req.body.search}
 
-// User.find(query,function(err, results) {
-//             if (err) {
-//                 return res.send(500, err);
-//             }
-//             req.flash('friends', 'List of friends');
-//             res.redirect('/users/friends/edit');
-//             console.log(results);
-//
-//             // res.render('friends', {
-//             //     title: 'Friend Connect | Results',
-//             //     searchResults: results
-//             // });
-//
-//         });
+
+if(query.length == 0){
+res.render('friends', {
+  _id,
+  errors,
+  name,
+  surname,
+  age,
+  email,
+  imageProfile,
+  friends,
+  friendRequests,
+  searchResults
+});
+}else {
+  const searchResult = {
+          searchResult: {
+              id: "",
+              imageProfile:"",
+              name: "Jane",
+              surname: "Doe",
+              friends: []
+          }
+      };
+User.find(query,function(err, results){
+            req.flash('success_msg', 'Search results');
+            searchResults=results;
+            console.log(results[0].name);
+        }).select('id name surname imageProfile friends');
+
+        // User.updateOne(queryUser,{$set:{"searchResults":searchResult}}, {multi: true},function(err, result){
+        // req.flash('success_msg', 'You have updated your details!!');
+        // //res.redirect('/users/friends/results');
+        // console.log(results[].name);
+        // });
+}
 });
 //Search function ---------------------------------------------
 

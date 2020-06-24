@@ -4,18 +4,20 @@ var ObjectId = require('mongodb').ObjectID;
 const FriendSchema = new mongoose.Schema({
 
     id:     {type: ObjectId},
-    name:   {type: String , default: "James"},
-    surname:  {type: String, default: "Bond" },
-    status:   {type: String , default: "Online"}
+    name:   {type: String },
+    imageProfile: {type: String},
+    surname:  {type: String},
+    status:   {type: Boolean}
 
 });
 
 const FriendRequestSchema = new mongoose.Schema({
-  friendRequest: {type: [{
+
     id:     {type: ObjectId},
-    name:   {type: String , default: "James"},
-    surname:  {type: String, default: "Bond" }
-  }]}
+    imageProfile: {type: String},
+    name:   {type: String},
+    surname:  {type: String}
+
 });
 
 const UserSchema = new mongoose.Schema({
@@ -43,18 +45,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: false
   },
-  friends: {
-    type: [FriendSchema],
-    required: true
-  },
-  friendRequests: {
-    type: [FriendRequestSchema],
-    required: true
-  },
-  status: {
-    type: Boolean,
-    required: false
-  },
+  friends: [],
+
+  friendRequests:[],
+
+  searchResults:[],
+
   date: {
     type: String,
     default: Date.now
