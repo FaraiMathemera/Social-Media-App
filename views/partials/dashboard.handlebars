@@ -1,6 +1,12 @@
+{{#if errors}}
+      {{#each errors}}
+        <div class="alert alert-danger">{{msg}}</div>
+      {{/each}}
+{{/if}}
+
 <div class = 'row' style = "padding-top: 3%;">
   <div class="col-12">
-    <form class="form-horizontal" action="/users/profile/edit" method="POST">
+    <form class="form-horizontal" action="/users/dashboard" method="POST">
       <div class="form-group" style="display:none">
         <label class="control-label col-sm-2" for="_id">ID</label>
         <div class="col-sm-10">
@@ -9,31 +15,49 @@
           id="_id"
           name="_id"
           class="form-control"
-          value="<%= _id %>"
+          value="{{user._id}}"
         />
         </div>
       </div>
 
+        {{!Picture}}
+        <div class="form-group">
+          <div class="row">
+            <div class="col-4">
+              <label class="control-label col-sm-2" for="name">Profile Picture: </label>
+            </div>
+            <div class="col-8">
+              <div class="col-sm-10">
+                <label class="custombutton" id="custombutton" style="width:200px;border: 1px solid #ccc;display: inline-block; padding: 6px 12px;cursor: pointer;">
+                 <input type="file" name="upload" accept="image/*" style=" display: none;" onchange="document.getElementById('custombutton').style.border = '2px solid lightgreen'">
+                 Select new file 
+                 </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      {{!User Name}}
       <div class="form-group">
         <div class="row">
           <div class="col-4">
-        <label class="control-label col-sm-2" for="imageProfile">Profile Picture</label>
-        </div>
+            <label class="control-label col-sm-2" for="name">User name: </label>
+          </div>
           <div class="col-8">
             <div class="col-sm-10">
             <input
-              type="imageProfile"
-              id="imageProfile"
-              name="imageProfile"
+              type="username"
+              id="username"
+              name="username"
               class="form-control"
-              value="<%= imageProfile %>"
+              value="{{user.username}}"
             />
             </div>
-        </div>
+          </div>
         </div>
       </div>
 
-      <%# Name %>
+      {{!Name}}
       <div class="form-group">
         <div class="row">
           <div class="col-4">
@@ -46,14 +70,14 @@
               id="name"
               name="name"
               class="form-control"
-              value="<%= name %>"
+              value="{{user.name}}"
             />
             </div>
           </div>
         </div>
       </div>
 
-      <%# Surname %>
+      {{!Surname}}
       <div class="form-group">
         <div class="row">
           <div class="col-4">
@@ -66,14 +90,14 @@
               id="surname"
               name="surname"
               class="form-control"
-              value="<%= surname %>"
+              value="{{user.surname}}"
             />
             </div>
           </div>
         </div>
       </div>
 
-      <%# Email %>
+      {{!Email}}
       <div class="form-group">
         <div class="row">
           <div class="col-4">
@@ -86,14 +110,14 @@
               id="email"
               name="email"
               class="form-control"
-              value="<%= email %>"
+              value="{{user.email}}"
             />
             </div>
           </div>
         </div>
       </div>
 
-      <%# Age %>
+      {{!Age}}
       <div class="form-group">
         <div class="row">
           <div class="col-4">
@@ -106,22 +130,22 @@
               id="age"
               name="age"
               class="form-control"
-              value="<%= age %>"
+              value="{{user.age}}"
             />
             </div>
           </div>
         </div>
         </div>
 
-        <%# Change Password %>
+        {{!Change Password}}
         <div class="row" style="padding: 3%;">
           <div class="col-12">
-            <a href="/password" class="btn btn-primary" style="width:100%; background-color: #FF5733">Change Password</a
+            <a href="/users/password" class="btn btn-primary" style="width:100%; background-color: #FF5733">Change Password</a
             >
           </div>
         </div>
 
-      <%# form footer %>
+      {{!Page Footer}}
       <div class="row" style="background-color:#D6EAF8;">
         <div class="col">
           <a  type="submit" onclick="this.closest('form').submit();return false;"><h3 class="mt-4">Save</h3></a>
@@ -130,7 +154,7 @@
 
         </div>
         <div class="col">
-          <a href="/profile"><h3 class="mt-4">Cancel</h3></a>
+          <a href="/"><h3 class="mt-4">Cancel</h3></a>
         </div>
       </div>
     </form>

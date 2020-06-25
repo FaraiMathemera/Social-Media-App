@@ -1,69 +1,80 @@
 <div class = 'row' style = "padding: 3%;">
   <div class="col-12">
-    <form class="form-horizontal" action="/users/profile/edit" method="POST">
+    <form class="form-horizontal" action="/users/dashboard/edit" method="POST">
 
-      <%# profile picture %>
+      {{!Profile Picture}}
       <div class="form-group">
         <div class="row">
           <div class="col-3">
-          <label class="control-label col-sm-2" for="imageProfile"><%= imageProfile %></label>
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80" class="img-rounded" alt="Cinque Terre" style = "max-height: 50%;max-width: 50%;border-radius:12%;">
+          <img class="profilestyle" src="/upload/{{user.userImage}}" alt="{{user.userImage}}" >
         </div>
         </div>
       </div>
 
-      <%# Name %>
+      {{!Userame}}
+      <div class="form-group">
+        <div class="row">
+          <div class="col-4">
+            <label class="control-label col-sm-2" for="name">User name: </label>
+          </div>
+          <div class="col-8">
+            <label class="control-label col-sm-2" for="name">{{user.username}}</label>
+          </div>
+        </div>
+      </div>
+
+      {{!Name}}
       <div class="form-group">
         <div class="row">
           <div class="col-4">
             <label class="control-label col-sm-2" for="name">Name: </label>
           </div>
           <div class="col-8">
-            <label class="control-label col-sm-2" for="name"><%= name %></label>
+            <label class="control-label col-sm-2" for="name">{{user.name}}</label>
           </div>
         </div>
       </div>
 
-      <%# Surname %>
+      {{!Surname}}
       <div class="form-group">
         <div class="row">
           <div class="col-4">
             <label class="control-label col-sm-2" for="surname">Surname: </label>
           </div>
           <div class="col-8">
-            <label class="control-label col-sm-2" for="surname"><%= surname %></label>
+            <label class="control-label col-sm-2" for="surname">{{user.surname}}</label>
           </div>
         </div>
       </div>
 
-      <%# Email %>
+      {{!Email}}
       <div class="form-group">
         <div class="row">
           <div class="col-4">
             <label class="control-label col-sm-2" for="age">Email: </label>
           </div>
           <div class="col-8">
-            <label class="control-label col-sm-2" for="email"><%= email %></label>
+            <label class="control-label col-sm-2" for="email">{{user.email}}</label>
           </div>
         </div>
       </div>
 
-      <%# Age %>
+      {{!Age}}
       <div class="form-group">
         <div class="row">
           <div class="col-4">
             <label class="control-label col-sm-2" for="age">Age: </label>
           </div>
           <div class="col-8">
-            <label class="control-label col-sm-2" for="imageProfile"><%= age %></label>
+            <label class="control-label col-sm-2" for="imageProfile">{{user.age}}</label>
           </div>
         </div>
       </div>
 
-      <%# form footer %>
+      {{!Page Footer}}
       <div class="row">
         <div class="col-12">
-        <a href="/dashboard"><h3 class="mt-4">Edit Profile</h3></a>
+        <a href="/users/dashboard"><h3 class="mt-4">Edit Profile</h3></a>
         </div>
       </div>
     </form>

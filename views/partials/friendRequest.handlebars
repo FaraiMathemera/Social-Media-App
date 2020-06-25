@@ -6,20 +6,13 @@
 
 
 <div class="container" style="width:100%;height:5%;padding:3%;border:1px solid #b1b1b1;border-radius:2%;">
-<%# Display heading if there any friend requests %>
-<% if ((friendRequests.length)>0) {%>
-  <h4 style="text-align: center;">Your friend requests.</h4>
-<%}%>
-
-<%# display friend requests %>
-<% for(var i=0; i<(friendRequests.length); i++) {%>
 
 <div class = 'row' style="">
   <div class="col-3">
   <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80" class="img-rounded" alt="Cinque Terre" style = "max-height: 40%;max-width: 40%;border-radius:12%;">
   </div>
   <div class="col-6">
-    <label style="font-size: 2em;"><%= friendRequests[i].friendRequest.name%> <%= friendRequests[i].friendRequest.surname%></label>
+    
   </div>
   <div class="col-3">
     <div class="row">
@@ -41,12 +34,6 @@
   </div>
 </div>
 
-<% } %>
-
-<%# If no friend requests display heading %>
-<% if((friendRequests.length)==0) {%>
-<h5 style="text-align: center;">You have no friend requests.</h5>
-<% } %>
 
 </div>
 </div>

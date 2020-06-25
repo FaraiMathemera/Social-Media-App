@@ -1,13 +1,22 @@
-<%- include("./partials/banner"); -%>
-
+{{> banner}}
+{{#if user}}
+        <div class="alert alert-danger">Username has taken already try new</div>
+{{/if}}
+{{#if mail}}
+        <div class="alert alert-danger">Email has taken already try new</div>
+{{/if}}
+{{#if errors}}
+      {{#each errors}}
+        <div class="alert alert-danger">{{msg}}</div>
+      {{/each}}
+{{/if}}
   <div class="row mt-5">
   <div class="col-md-6 m-auto">
     <div class="card card-body">
-      <h1 class="text-center mb-3">
-        <i class="fa fa-user-plus" style="color:#2727d8;""></i> Register
-      </h1>
-      <%- include ("./partials/messages"); -%>
+      <h1 class="text-center mb-3"><i class="fa fa-user-plus" style="color:#2727d8;"></i> Register</h1>
+      {{> messages}}
       <form action="/users/register" method="POST">
+
         <div class="form-group">
           <label for="name">Name</label>
           <input
@@ -16,9 +25,9 @@
             name="name"
             class="form-control"
             placeholder="Enter Name"
-            value="<%= typeof name != 'undefined' ? name : '' %>"
           />
         </div>
+
         <div class="form-group">
           <label for="surname">Surname</label>
           <input
@@ -27,9 +36,20 @@
             name="surname"
             class="form-control"
             placeholder="Enter Surname"
-            value="<%= typeof surname != 'undefined' ? surname : '' %>"
           />
         </div>
+
+        <div class="form-group">
+          <label for="username">User Name</label>
+          <input
+            type="username"
+            id="username"
+            name="username"
+            class="form-control"
+            placeholder="Enter User Name"
+          />
+        </div>
+
         <div class="form-group">
           <label for="email">Email</label>
           <input
@@ -38,9 +58,9 @@
             name="email"
             class="form-control"
             placeholder="Enter Email"
-            value="<%= typeof email != 'undefined' ? email : '' %>"
           />
         </div>
+
         <div class="form-group">
           <label for="password">Password</label>
           <input
@@ -49,9 +69,9 @@
             name="password"
             class="form-control"
             placeholder="Create Password"
-            value="<%= typeof password != 'undefined' ? password : '' %>"
           />
         </div>
+
         <div class="form-group">
           <label for="password2">Confirm Password</label>
           <input
@@ -60,14 +80,17 @@
             name="password2"
             class="form-control"
             placeholder="Confirm Password"
-            value="<%= typeof password2 != 'undefined' ? password2 : '' %>"
           />
         </div>
+
         <button type="submit" class="btn btn-primary btn-block">
           Register
         </button>
+
       </form>
+
       <p class="lead mt-4">Have An Account? <a href="/users/login">Login</a></p>
+
     </div>
   </div>
 </div>

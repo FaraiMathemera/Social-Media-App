@@ -1,346 +1,240 @@
-const express = require('express');
-const router = express.Router();
+var express = require('express');
+var router = express.Router();
+var passport = require('passport');
 const bcrypt = require('bcryptjs');
-const passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 
-//user model
-let User = require('../models/User');
+var User = require('../models/user');
 
-//Login Page
-router.get('/login', (req,res) => res.render('login'));
-
-//Register Page
-router.get('/register', (req,res) => res.render('register'));
-
-//Profile Page
-router.get('/dashboard/edit', (req,res) => res.render('dashboard'));
-
-//Dashboard Page
-router.get('/profile/edit', (req,res) => res.render('profile'));
-
-//Friends Page
-router.get('/friends/edit', (req,res) => res.render('friends'));
-
-//Change password Page
-router.get('/password/edit', (req,res) => res.render('password'));
-
-//Search Page
-router.get('/friends/results', (req,res) => res.render('friends'));
-
-//Register handle ----------------------------------------------------------------------------------
-router.post('/register', (req, res) => {
-const {name, surname, age, email, password, password2, friends, friendRequests, searchResults, imageProfile, status} = req.body;
-let errors =[];
-//Check required fields
-if(!name||!surname||!email||!password||!password2){
-  errors.push({msg: 'Please fill in all the fields'});
-}
-//Check passwords
-if (password != password2){
-  errors.push({msg: 'Passwords do not match'});
-}
-
-//Check password length
-if(password.length< 6){
-  errors.push({msg: 'Password should be at least 6 characters'});
-}
-
-//Check for  upper and lower case character
-if(password.search(/[\[\]?=.*[a-zA-Z]/) == -1){
-  errors.push({msg: 'Password should contain an upper and lower case character'});
-}
-
-//Check for a number
-if(password.search(/[\[\]?=.*[0-9]/) == -1){
-  errors.push({msg: 'Password should contain a number'});
-}
-
-//Check for a special character
-if(password.search(/[\[\]?=.*[!@#$%^&*]/) == -1){
-  errors.push({msg: 'Password should contain a special character'});
-}
-
-if (errors.length>0){
-res.render('register', {
-  errors,
-  name,
-  surname,
-  age,
-  email,
-  password,
-  password2
-});
-}else {
-  //Validation passed
-  User.findOne({ email: email})
-    .then(user => {
-      if(user){
-        //user exists
-        errors.push({msg: 'Email is already registered'});
-        res.render('register', {
-          errors,
-          name,
-          surname,
-          age,
-          email,
-          password,
-          password2
-        });
-      } else {
-const newUser = new User({
-  name,
-  surname,
-  age,
-  email,
-  password,
-  friends,
-  friendRequests,
-  imageProfile,
-  searchResults,
-  status
+// Register
+router.get('/register', function (req, res) {
+	res.render('register');
 });
 
-//hash password
-bcrypt.genSalt(10,(err, salt) =>
- bcrypt.hash(newUser.password, salt, (err, hash) => {
-   if(err) throw err;
-//savepassword hash
-   newUser.password = hash;
-   newUser.save()
-     .then(user =>{
-       req.flash('success_msg', 'You are now registered and can log in!!!');
-       res.redirect('/users/login');
-     })
-     .catch(err => console.log(err));
-
- }))
-      }
-    });
-
-}
+// Dashboard
+router.get('/dashboard', function (req, res) {
+	res.render('dashboard');
 });
-//Register handle ---------------------------------------------------------------------------------------------------------------
 
-//Change Password handle --------------------------------------------------------------------------------------------------------
-router.post('/password/:id', (req, res) => {
-var item = {_id, password, oldpassword, password1, password2} = req.body;
-let errors =[];
+
+// Login
+router.get('/login', function (req, res) {
+	res.render('login');
+});
+
+// password change
+router.get('/password', function (req, res) {
+	res.render('password');
+});
+
+// Login
+router.get('/search', function (req, res) {
+	res.render('search');
+});
+
+// friends
+router.get('/friends', function (req, res) {
+	res.render('friends');
+});
+//Dashboard handle ------------------------------------------------------------------------------------------------------------------------
+router.post('/dashboard',(req, res) =>{
+var item = {_id, name, surname, age, email, imageProfile, username} = req.body;
 let query = {_id:req.body._id}
 //Check required fields
-if(!oldpassword||!password1||!password2){
-  errors.push({msg: 'Please fill in all the fields'});
-  console.log("Please fill in all the fields");
-}
-//Check new passwords
-if (password1 != password2){
-  errors.push({msg: 'Passwords do not match'});
-  console.log("Passwords do not match");
-}
+req.checkBody('name', 'Name is required').notEmpty();
+req.checkBody('surname', 'Surname is required').notEmpty();
+req.checkBody('email', 'Email is required').notEmpty();
+req.checkBody('email', 'Email is not valid').isEmail();
+req.checkBody('username', 'Username is required').notEmpty();
+var form =new formidable.IncomingForm();
+form.parse(req);
+let reqPath= path.join(__dirname, '../');
+let newfilename;
+form.on('fileBegin', function(name, file){
+	file.path = reqPath+ 'public/upload/'+ req.user.username + file.name;
+	newfilename= req.user.username+ file.name;
+});
+form.on('file', function(name, file) {
+	User.findOneAndUpdate({
+		username: req.user.username
+	},
+	{
+		'userImage': newfilename
+	},
+	function(err, result){
+		if(err) {
+			console.log(err);
+		}
+	});
+});
+var errors = req.validationErrors();
 
-//Check old password
-bcrypt.compare(oldpassword, password, function(err, result) {
-    // result == true
-    if (result != true){
-      errors.push({msg: 'Incorrect Password'});
-      console.log("Incorrect Password");
+	if (errors) {
+		res.render('dashboard', {
+			errors: errors
+		});
+	}
+  else {
+
+  User.updateOne(query,{$set:item}, {multi: true},function(err, result){
+req.flash('success_msg', 'You have updated your details!!');
+res.redirect('/dashboard');
+console.log(query);
+});
 }
 });
+//Dashboard handle ---------------------------------------------------------------------------------------------------------------------------------
+//password update handle ---------------------------------------------------------------------------------------------------------------------------------
+router.post('/password', (req, res) => {
+var item = {_id, password, oldpassword, password1, password2} = req.body;
+let query = {_id:req.body._id}
+var passcheck;
+
+//Check required fields
+req.checkBody('oldpassword', 'Old password is required').notEmpty();
+req.checkBody('password1', 'New password is required').notEmpty();
+req.checkBody('password2', 'Password confirmation needed').notEmpty();
+req.checkBody('password2', 'Passwords do not match').equals(req.body.password1);
 
 //Check password length
-if(password1.length< 6){
-  errors.push({msg: 'Password should be at least 6 characters'});
-  console.log("> 6");
+req.checkBody('password1', 'Password should be at least 6 characters').isLength({ min: 6});
+//Check password case Check password contains number //Check password special character
+req.checkBody('password1', 'Password should contain an upper and lower case character, number and special character').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d@$.!%*#?&]/, "i");
+//check old password
+req.checkBody('oldpassword').custom(oldpassword=> {
+  bcrypt.compare(oldpassword, password, function(err, result) {
+      passcheck = result;
+  });
+  if (passcheck == true){throw new Error('Incorrect Password')}else{
+            return true;
 }
-
-//Check for  upper and lower case character
-if(password1.search(/[\[\]?=.*[a-zA-Z]/) == -1){
-  errors.push({msg: 'Password should contain an upper and lower case character'});
-  console.log("Lower and upper");
-}
-
-//Check for a number
-if(password1.search(/[\[\]?=.*[0-9]/) == -1){
-  errors.push({msg: 'Password should contain a number'});
-  console.log("number");
-}
-
-//Check for a special character
-if(password1.search(/[\[\]?=.*[!@#$%^&*]/) == -1){
-  errors.push({msg: 'Password should contain a special character'});
-  console.log("special");
-}
+ })
 
 
- if (errors.length>0){
- res.render('password', {
-   _id,
-   errors,
-   password,
-   oldpassword,
-   password1,
-   password2
- });
+//Check old password
+var errors = req.validationErrors();
 
-}else {
+	if (errors) {
+		res.render('password', {
+			errors: errors
+		});
+	}
+  else {
 
 //hash password
   bcrypt.genSalt(10,(err, salt) =>
    bcrypt.hash(password1, salt, (err, hash) => {
      if(err) throw err;
   //save password hash
-  //password1 = hash;
-  const friends = {
-          friend: {
-              id: "",
-              imageProfile:"",
-              name: "Jane",
-              surname: "Doe",
-              status: true
-          }
-      };
-
-     User.updateOne(query,{$set:{"password":hash,"friends":friends}}, {multi: true},function(err, result){
-         req.flash('success_msg', 'You have successfully updated your password');
-         res.redirect('/users/password/edit');
+     User.updateOne(query,{$set:{"password":hash}}, {multi: true},function(err, result){
+         req.flash('success_msg', 'You have updated your password');
+         res.redirect('/password');
          console.log("Password Changed");
        })
        .catch(err => console.log(err));
-
    }))
-
-
 }
 });
-//Change password handle ------------------------------------------------------------------------------------------------------------------
+// password User----------------------------------------------------------------------------------------------------------------------------------
+// Register User----------------------------------------------------------------------------------------------------------------------------------
+router.post('/register', function (req, res) {
+	var name = req.body.name;
+	var email = req.body.email;
+	var username = req.body.username;
+	var password = req.body.password;
+	var password2 = req.body.password2;
 
-//Dashboard handle ------------------------------------------------------------------------------------------------------------------------
-router.post('/dashboard/:id',(req, res) =>{
-var item = {_id, name, surname, age, email, imageProfile, friends} = req.body;
-let errors =[];
-let query = {_id:req.body._id}
-//Check required fields
-if(!name||!surname||!age){
-  errors.push({msg: 'Please fill in required fields'});
-}
+	// Validation
+	req.checkBody('name', 'Name is required').notEmpty();
+	req.checkBody('email', 'Email is required').notEmpty();
+	req.checkBody('email', 'Email is not valid').isEmail();
+	req.checkBody('username', 'Username is required').notEmpty();
+	req.checkBody('password', 'Password is required').notEmpty();
+	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
 
-if(errors.length > 0){
-res.render('dashboard', {
-  _id,
-  errors,
-  name,
-  surname,
-  age,
-  email,
-  imageProfile,
-  friends
+	var errors = req.validationErrors();
+
+	if (errors) {
+		res.render('register', {
+			errors: errors
+		});
+	}
+	else {
+		//checking for email and username are already taken
+		User.findOne({ username: {
+			"$regex": "^" + username + "\\b", "$options": "i"
+	}}, function (err, user) {
+			User.findOne({ email: {
+				"$regex": "^" + email + "\\b", "$options": "i"
+		}}, function (err, mail) {
+				if (user || mail) {
+					res.render('register', {
+						user: user,
+						mail: mail
+					});
+				}
+				else {
+					var newUser = new User({
+						name: name,
+						email: email,
+						username: username,
+						password: password
+					});
+					User.createUser(newUser, function (err, user) {
+						if (err) throw err;
+						console.log(user);
+					});
+         	req.flash('success_msg', 'You are registered and can now login');
+					res.redirect('/users/login');
+				}
+			});
+		});
+	}
 });
-}else {
-  //Validation Passed
-  //Update user
-  User.updateOne(query,{$set:item}, {multi: true},function(err, result){
-req.flash('success_msg', 'You have updated your details!!');
-res.redirect('/users/dashboard/edit');
-console.log(query);
-});
-}
-});
-//Dashboard handle ---------------------------------------------
+//register handle-----------------------------------------------------------------------------------------------------------------
+//startegy handle-----------------------------------------------------------------------------------------------------------------
+passport.use(new LocalStrategy(
+	function (username, password, done) {
+		User.getUserByUsername(username, function (err, user) {
+			if (err) throw err;
+			if (!user) {
+				return done(null, false, { message: 'Unknown User' });
+			}
 
-//Search function -----------------------------------------------
-router.post('/friends/:id',(req, res) =>{
-var item = {_id, name, surname, age, email, imageProfile, friends} = req.body;
-let errors =[];
-let searchResults = [];
-let queryUser = {_id:req.body._id}
-let query = {name:req.body.search}
-
-
-if(query.length == 0){
-res.render('friends', {
-  _id,
-  errors,
-  name,
-  surname,
-  age,
-  email,
-  imageProfile,
-  friends,
-  friendRequests,
-  searchResults
-});
-}else {
-  const searchResult = {
-          searchResult: {
-              id: "",
-              imageProfile:"",
-              name: "Jane",
-              surname: "Doe",
-              friends: []
-          }
-      };
-User.find(query,function(err, results){
-            req.flash('success_msg', 'Search results');
-            searchResults=results;
-            console.log(results[0].name);
-        }).select('id name surname imageProfile friends');
-
-        // User.updateOne(queryUser,{$set:{"searchResults":searchResult}}, {multi: true},function(err, result){
-        // req.flash('success_msg', 'You have updated your details!!');
-        // //res.redirect('/users/friends/results');
-        // console.log(results[].name);
-        // });
-}
-});
-//Search function ---------------------------------------------
-
-//Update handle -----------------------------------------------
-router.post('/profile/:id',(req, res) =>{
-var item = {_id, name, surname, age, email, imageProfile, friends} = req.body;
-let errors =[];
-let query = {_id:req.body._id}
-//Check required fields
-if(!name||!surname||!age){
-  errors.push({msg: 'Please fill in required fields'});
-}
-
-if(errors.length > 0){
-res.render('profile', {
-  _id,
-  errors,
-  name,
-  surname,
-  age,
-  email,
-  imageProfile,
-  friends
-});
-}else {
-  //Validation Passed
-  //Update user
-  User.updateOne(query,{$set:item}, {multi: true},function(err, result){
-req.flash('success_msg', 'You have updated your details!!');
-res.redirect('/users/profile/edit');
-console.log(query);
-});
-}
-});
-//Update handle ---------------------------------------------
-
-
-//Login handle
-router.post('/login', (req, res, next) =>{
-passport.authenticate('local', {
-  successRedirect: '/profile',
-  failureRedirect:  '/users/login',
-  failureFlash: true
-})(req, res, next);
+			User.comparePassword(password, user.password, function (err, isMatch) {
+				if (err) throw err;
+				if (isMatch) {
+					return done(null, user);
+				} else {
+					return done(null, false, { message: 'Invalid password' });
+				}
+			});
+		});
+	}));
+//strategy handle-----------------------------------------------------------------------------------------------------------------
+//Passport handle-----------------------------------------------------------------------------------------------------------------
+passport.serializeUser(function (user, done) {
+	done(null, user.id);
 });
 
-//Logout handle
-router.get('/logout', (req, res) => {
-req.logout();
-req.flash('success_msg', 'You are logged out!!')
-res.redirect('/users/login');
+passport.deserializeUser(function (id, done) {
+	User.getUserById(id, function (err, user) {
+		done(err, user);
+	});
+});
+//passport handle-----------------------------------------------------------------------------------------------------------------
+router.post('/login',
+	passport.authenticate('local', { successRedirect: '/', failureRedirect: '/users/login', failureFlash: true }),
+	function (req, res) {
+		res.redirect('/');
+	});
+
+router.get('/logout', function (req, res) {
+	req.logout();
+
+	req.flash('success_msg', 'You are logged out');
+
+	res.redirect('/users/login');
 });
 
-module.exports=router;
+module.exports = router;
