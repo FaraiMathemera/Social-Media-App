@@ -88,7 +88,7 @@ app.use(expressValidator({
   }
 }));
 //custom validator
-app.use(expressValidator({
+//app.use(expressValidator({
 //  customValidators: {
 //     customFunction: function(name){
 //       if(bcrypt.compare(oldpassword, password, function(err, result) {}){
