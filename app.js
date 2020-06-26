@@ -87,6 +87,16 @@ app.use(expressValidator({
     };
   }
 }));
+//custom validator
+app.use(expressValidator({
+//  customValidators: {
+//     customFunction: function(name){
+//       if(bcrypt.compare(oldpassword, password, function(err, result) {}){
+//     return false;
+//     }
+//   }
+//  }}
+// ));
 
 // Connect Flash
 app.use(flash());
