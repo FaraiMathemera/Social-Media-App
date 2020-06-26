@@ -1,4 +1,4 @@
-# Authentication System Challenge
+# Social Media Application
 
 ## Presequisites
 - Node
