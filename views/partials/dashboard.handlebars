@@ -4,22 +4,6 @@
       {{/each}}
 {{/if}}
 
-<div class = 'row' style = "padding-top: 3%;">
-  <div class="col-12">
-    <form class="form-horizontal" action="/users/dashboard" method="POST">
-      <div class="form-group" style="display:none">
-        <label class="control-label col-sm-2" for="_id">ID</label>
-        <div class="col-sm-10">
-        <input
-          type="_id"
-          id="_id"
-          name="_id"
-          class="form-control"
-          value="{{user._id}}"
-        />
-        </div>
-      </div>
-
         {{!Picture}}
         <div class="form-group">
           <div class="row">
@@ -140,7 +124,7 @@
         {{!Change Password}}
         <div class="row" style="padding: 3%;">
           <div class="col-12">
-            <a href="/users/password" class="btn btn-primary" style="width:100%; background-color: #FF5733">Change Password</a
+            <a href="/users/password" class="btn btn-primary" style="width:100%; background-color: #FF5733" style="text-decoration: none;">Change Password</a
             >
           </div>
         </div>
@@ -154,7 +138,7 @@
 
         </div>
         <div class="col">
-          <a href="/"><h3 class="mt-4">Cancel</h3></a>
+          <a href="/" style="text-decoration: none;"><h3 class="mt-4">Cancel</h3></a>
         </div>
       </div>
     </form>

@@ -8,6 +8,7 @@ var async = require('async');
 var bcrypt = require('bcryptjs');
 var cookieParser = require('cookie-parser');
 
+
 var User = require('../models/user');
 
 // Register
@@ -32,6 +33,10 @@ router.get('/password', function (req, res) {
 
 router.get('/dashboard', function (req, res) {
 	res.render('dashboard');
+});
+
+router.get('/passwordchange', function (req, res) {
+	res.render('passwordchange');
 });
 
 // Register User--------------------------------------------------------------------------------------------------------------
@@ -98,14 +103,19 @@ router.post('/register', function (req, res) {
 	}
 });
 // Register User---------------------------------------------------------------------------------------------------------
+router.post('/password',
+	passport.authenticate('local', { successRedirect: '/passwordchange', failureRedirect: '/password', failureFlash: true }),
+	function (req, res) {
+		res.redirect('/passwordchange');
+	});
 //password update handle ---------------------------------------------------------------------------------------------------------------------------------
-router.post('/password', (req, res) => {
+router.post('/passwordchange', (req, res) => {
+
 var item = {_id, password, oldpassword, password1, password2} = req.body;
 let query = {_id:req.body._id}
 
 
 //Check required fields
-req.checkBody('oldpassword', 'Old password is required').notEmpty();
 req.checkBody('password1', 'New password is required').notEmpty();
 req.checkBody('password2', 'Password confirmation needed').notEmpty();
 req.checkBody('password2', 'Passwords do not match').equals(req.body.password1);
@@ -115,24 +125,14 @@ req.checkBody('password1', 'Password should be at least 6 characters').isLength(
 //Check password case Check password contains number //Check password special character
 req.checkBody('password1', 'Password should contain an upper and lower case character, number and special character').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d@$.!%*#?&]/, "i");
 //check old password
-req.checkBody('oldpassword', 'incorrect password').custom(oldpassword=> {
-	var passcheck;
-  bcrypt.compare(oldpassword, password, function(err, result) {
-			passcheck=result;
-			console.log(passcheck);
-  });
-	if (passcheck === "true"){console.log(passcheck); return true;}else{
-						console.log(passcheck); return false;
-	}
-});
+//req.checkBody('oldpassword', 'incorrect password').customfunction();
 
 
-//Check old password
+//Change password---------------------------------------------------------------
 var errors = req.validationErrors();
-
 	if (errors) {
 		res.render('password', {
-			errors: errors
+			errors: errors,
 		});
 	}
   else {
@@ -142,14 +142,16 @@ var errors = req.validationErrors();
    bcrypt.hash(password1, salt, (err, hash) => {
      if(err) throw err;
   //save password hash
-     User.updateOne(query,{$set:{"password":hash}},function(err, result){
+     User.updateOne(query,{$set:{"password":hash}}, {multi: true},function(err, result){
          req.flash('success_msg', 'You have updated your password');
-         res.redirect('/users/password');
+         res.redirect('/password');
          console.log("Password Changed");
        })
        .catch(err => console.log(err));
    }))
 }
+//Change password---------------------------------------------------------------
+
 });
 // password User----------------------------------------------------------------------------------------------------------------------------------
 //Dashboard handle ------------------------------------------------------------------------------------------------------------------------
@@ -195,7 +197,7 @@ var errors = req.validationErrors();
 
   User.updateOne(query,{$set:item}, {multi: true},function(err, result){
 req.flash('success_msg', 'You have updated your details!!');
-res.redirect('/users/dashboard');
+res.redirect('/dashboard');
 console.log(query);
 });
 }
@@ -234,6 +236,7 @@ passport.deserializeUser(function (id, done) {
 // Register User--------------------------------------------------------------------------------------------------------------
 router.post('/login',
 	passport.authenticate('local', { successRedirect: '/', failureRedirect: '/users/login', failureFlash: true }),
+
 	function (req, res) {
 		if (req.body.remember_me) {
                         req.session.cookie.originalMaxAge = 2592000000;
@@ -241,9 +244,16 @@ router.post('/login',
                         req.session.cookie._expires = false;
                   }
 		res.redirect('/');
+
 	});
 
 router.get('/logout', function (req, res) {
+	//logout function
+	let query = {_id:req.body._id}
+	User.updateOne(query,{$set:{"status":"Offline"}}, {multi: true},function(err, result){
+			console.log("Offline");
+		})
+		.catch(err => console.log(err));
 	req.logout();
 
 	req.flash('success_msg', 'You are logged out');

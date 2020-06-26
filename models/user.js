@@ -22,6 +22,10 @@ var UserSchema = mongoose.Schema({
 	age: {
 		type: Number
 	},
+	status: {
+		type: String,
+		default:'Offline'
+	},
 	userImage : {
 		type:String,
 		default:'default.png'
@@ -35,7 +39,8 @@ var UserSchema = mongoose.Schema({
 	}],
 	friendsList: [{
 		friendId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-		friendName: {type: String, default: ''}
+		friendName: {type: String, default: ''},
+		friendStatus: {type: String, default: 'Offline'}
 	}],
 	totalRequest: {type: Number, default:0}
 });

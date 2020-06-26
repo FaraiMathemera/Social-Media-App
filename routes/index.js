@@ -4,11 +4,29 @@ var formidable = require('formidable');
 var User = require('../models/user');
 var path = require('path');
 var async = require('async');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var formidable = require('formidable');
+var bcrypt = require('bcryptjs');
+var cookieParser = require('cookie-parser');
+
 
 // Get Homepage
 router.get('/', ensureAuthenticated, function(req, res){
-	
+	//Online Status
+	let query = {_id:req.body._id}
+	User.updateOne(query,{$set:{"status":"Online"}}, {multi: true},function(err, result){
+			console.log("Online");
+		})
+		.catch(err => console.log(err));
 	res.render('index', {
+
+	});
+});
+
+router.get('/friends', ensureAuthenticated, function(req, res){
+
+	res.render('friends', {
 		newfriend: req.user.request
 	});
 });
@@ -20,12 +38,12 @@ router.get('/search', ensureAuthenticated, function(req, res){
 	received= req.user.request;
 	sent= req.user.sentRequest;
 	friends= req.user.friendsList;
-	
+
 
 
 	User.find({username: {$ne: req.user.username}}, function(err, result){
 		if (err) throw err;
-		
+
 		res.render('search',{
 			result: result,
 			sent: sent,
@@ -48,17 +66,18 @@ router.post('/search', ensureAuthenticated, function(req, res) {
 				 result: result,
 				 mssg : mssg
 			 });
-	   	});	
+	   	});
 	}
-	 
+
  	async.parallel([
 		function(callback) {
 			if(req.body.receiverName) {
 					User.update({
 						'username': req.body.receiverName,
 						'request.userId': {$ne: req.user._id},
-						'friendsList.friendId': {$ne: req.user._id}
-					}, 
+						'friendsList.friendId': {$ne: req.user._id},
+						'friendsList.friendStatus': {$ne: req.user.status}
+					},
 					{
 						$push: {request: {
 						userId: req.user._id,
@@ -96,15 +115,18 @@ router.post('/search', ensureAuthenticated, function(req, res) {
 					if (req.body.senderId) {
 						User.update({
 							'_id': req.user._id,
-							'friendsList.friendId': {$ne:req.body.senderId}
+							'friendsList.friendId': {$ne:req.body.senderId},
+								'friendsList.friendStatus': {$ne:req.body.senderId}
 						},{
 							$push: {friendsList: {
 								friendId: req.body.senderId,
-								friendName: req.body.senderName
+								friendName: req.body.senderName,
+								friendStatus: req.body.status
 							}},
 							$pull: {request: {
 								userId: req.body.senderId,
-								username: req.body.senderName
+								username: req.body.senderName,
+								friendStatus: req.body.status
 							}},
 							$inc: {totalRequest: -1}
 						}, (err, count)=> {
@@ -112,19 +134,22 @@ router.post('/search', ensureAuthenticated, function(req, res) {
 						});
 					}
 				},
-				// this function is updated for the sender of the friend request when it is accepted by the receiver	
+				// this function is updated for the sender of the friend request when it is accepted by the receiver
 				function(callback) {
 					if (req.body.senderId) {
 						User.update({
 							'_id': req.body.senderId,
-							'friendsList.friendId': {$ne:req.user._id}
+							'friendsList.friendId': {$ne:req.user._id},
+								'friendsList.friendStatus': {$ne:req.user.status}
 						},{
 							$push: {friendsList: {
 								friendId: req.user._id,
-								friendName: req.user.username
+								friendName: req.user.username,
+								friendStatus: req.body.status
 							}},
 							$pull: {sentRequest: {
-								username: req.user.username
+								username: req.user.username,
+								friendStatus: req.user.status
 							}}
 						}, (err, count)=> {
 							callback(err, count);
@@ -159,13 +184,13 @@ router.post('/search', ensureAuthenticated, function(req, res) {
 							callback(err, count);
 						});
 					}
-				} 		
+				}
 			],(err, results)=> {
 				res.redirect('/search');
 			});
 });
 
-router.post('/', function(req, res) {
+router.post('/dashboard', function(req, res) {
 	var form =new formidable.IncomingForm();
 	form.parse(req);
 	let reqPath= path.join(__dirname, '../');
@@ -188,7 +213,7 @@ router.post('/', function(req, res) {
 		});
 	});
 	req.flash('success_msg', 'Your profile picture has been uploaded');
-	res.redirect('/');
+	res.redirect('/users/dashboard');
 });
 
 function ensureAuthenticated(req, res, next){
