@@ -34,3 +34,7 @@ $ npm run dev
 
 ## Database:
 - Open "config/keys.js" and add your MongoDB URI, local or Atlas
+
+## Issues:
+- comparig password with express validation function
+- checking whether user is online
