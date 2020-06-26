@@ -7,24 +7,11 @@ var async = require('async');
 
 // Get Homepage
 router.get('/', ensureAuthenticated, function(req, res){
-
+	
 	res.render('index', {
 		newfriend: req.user.request
 	});
 });
-
-router.get('/dashboard', ensureAuthenticated, (req,res) => res.render('dashboard',
-{_id: req.user._id, name: req.user.name, username: req.user.username, surname: req.user.surname, email: req.user.email, age: req.user.age, imageProfile: req.user.imageProfile, friends: req.user.friends, friendRequests: req.user.friendRequests, status: req.user.status}));
-
-router.get('/profile', ensureAuthenticated, (req,res) => res.render('profile',
-{_id: req.user._id, name: req.user.name, username: req.user.username, surname: req.user.surname, email: req.user.email, age: req.user.age, imageProfile: req.user.imageProfile, friends: req.user.friends, friendRequests: req.user.friendRequests, status: req.user.status}));
-
-router.get('/friends', ensureAuthenticated, (req,res) => res.render('friends',
-{_id: req.user._id, name: req.user.name, surname: req.user.surname, email: req.user.email, age: req.user.age, imageProfile: req.user.imageProfile, friends: req.user.friends, friendRequests: req.user.friendRequests, status: req.user.status, searchResults: req.user.searchResults}));
-
-router.get('/password', ensureAuthenticated, (req,res) => res.render('password',
-{_id: req.user._id, name: req.user.name, surname: req.user.surname, email: req.user.email, age: req.user.age, imageProfile: req.user.imageProfile, friends: req.user.friends, password: req.user.password}));
-
 
 router.get('/search', ensureAuthenticated, function(req, res){
 	var sent =[];
@@ -33,12 +20,12 @@ router.get('/search', ensureAuthenticated, function(req, res){
 	received= req.user.request;
 	sent= req.user.sentRequest;
 	friends= req.user.friendsList;
-
+	
 
 
 	User.find({username: {$ne: req.user.username}}, function(err, result){
 		if (err) throw err;
-
+		
 		res.render('search',{
 			result: result,
 			sent: sent,
@@ -61,9 +48,9 @@ router.post('/search', ensureAuthenticated, function(req, res) {
 				 result: result,
 				 mssg : mssg
 			 });
-	   	});
+	   	});	
 	}
-
+	 
  	async.parallel([
 		function(callback) {
 			if(req.body.receiverName) {
@@ -71,7 +58,7 @@ router.post('/search', ensureAuthenticated, function(req, res) {
 						'username': req.body.receiverName,
 						'request.userId': {$ne: req.user._id},
 						'friendsList.friendId': {$ne: req.user._id}
-					},
+					}, 
 					{
 						$push: {request: {
 						userId: req.user._id,
@@ -125,7 +112,7 @@ router.post('/search', ensureAuthenticated, function(req, res) {
 						});
 					}
 				},
-				// this function is updated for the sender of the friend request when it is accepted by the receiver
+				// this function is updated for the sender of the friend request when it is accepted by the receiver	
 				function(callback) {
 					if (req.body.senderId) {
 						User.update({
@@ -172,7 +159,7 @@ router.post('/search', ensureAuthenticated, function(req, res) {
 							callback(err, count);
 						});
 					}
-				}
+				} 		
 			],(err, results)=> {
 				res.redirect('/search');
 			});

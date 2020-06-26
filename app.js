@@ -2,8 +2,10 @@ var express = require('express');
 var path = require('path');
 var http = require('http');
 var cookieParser = require('cookie-parser');
+const Handlebars = require('handlebars');
 var bodyParser = require('body-parser');
 var exphbs = require('express-handlebars');
+const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access');
 var expressValidator = require('express-validator');
 var flash = require('connect-flash');
 var session = require('express-session');
@@ -20,6 +22,7 @@ mongoose.connect(db, { useNewUrlParser: true })
   .then(() => console.log('MongoDB Connected ...'))
   .catch(err => console.log(err));
 
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -27,6 +30,8 @@ var users = require('./routes/users');
 var app = express();
 const server = http.createServer(app);
 const io= socketIO(server);
+
+
 
 require('./socket/friend')(io);
 // View Engine
@@ -40,6 +45,7 @@ app.engine('handlebars', exphbs({
       return options.inverse(this);
     }
   },
+  handlebars: allowInsecurePrototypeAccess(Handlebars),
   defaultLayout:'layout'
 }));
 app.set('view engine', 'handlebars');
