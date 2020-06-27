@@ -31,6 +31,34 @@ router.get('/friends', ensureAuthenticated, function(req, res){
 	});
 });
 
+router.get('/password', ensureAuthenticated, function(req, res){
+
+	res.render('password', {
+
+	});
+});
+
+router.get('/passwordchange', ensureAuthenticated, function(req, res){
+
+	res.render('passwordchange', {
+
+	});
+});
+
+router.get('/picture', ensureAuthenticated, function(req, res){
+
+	res.render('picture', {
+
+	});
+});
+
+router.get('/dashboard', ensureAuthenticated, function(req, res){
+
+	res.render('dashboard', {
+
+	});
+});
+
 router.get('/search', ensureAuthenticated, function(req, res){
 	var sent =[];
 	var friends= [];
@@ -190,30 +218,28 @@ router.post('/search', ensureAuthenticated, function(req, res) {
 			});
 });
 
-router.post('/dashboard', function(req, res) {
+router.post('/picture', function(req, res) {
+	let query = {_id:req.user._id}
 	var form =new formidable.IncomingForm();
 	form.parse(req);
 	let reqPath= path.join(__dirname, '../');
 	let newfilename;
 	form.on('fileBegin', function(name, file){
-		file.path = reqPath+ 'public/upload/'+ req.user.username + file.name;
+		file.path = reqPath+ '/public/upload/'+ req.user.username + file.name;
 		newfilename= req.user.username+ file.name;
+
+		User.updateOne(query,{$set:{"userImage":req.user.username+ file.name}}, {multi: true},function(err, result){
+				req.flash('success_msg', 'You have changed your photo');
+				res.redirect('/users/dashboard');
+				console.log(req.user.username+ file.name,query);
+			})
+			.catch(err => console.log(err));
 	});
-	form.on('file', function(name, file) {
-		User.findOneAndUpdate({
-			username: req.user.username
-		},
-		{
-			'userImage': newfilename
-		},
-		function(err, result){
-			if(err) {
-				console.log(err);
-			}
-		});
-	});
-	req.flash('success_msg', 'Your profile picture has been uploaded');
-	res.redirect('/users/dashboard');
+
+
+
+
+
 });
 
 function ensureAuthenticated(req, res, next){

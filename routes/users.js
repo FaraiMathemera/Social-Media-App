@@ -21,20 +21,25 @@ router.get('/login', function (req, res) {
 	res.render('login');
 });
 
-// Login
+// friends
 router.get('/friends', function (req, res) {
 	res.render('friends');
 });
 
-// Login
+// friends
+router.get('/picture', function (req, res) {
+	res.render('picture');
+});
+
+// Password
 router.get('/password', function (req, res) {
 	res.render('password');
 });
-
+//dashboard
 router.get('/dashboard', function (req, res) {
 	res.render('dashboard');
 });
-
+//change password
 router.get('/passwordchange', function (req, res) {
 	res.render('passwordchange');
 });
@@ -102,12 +107,14 @@ router.post('/register', function (req, res) {
 		});
 	}
 });
+// Current Password---------------------------------------------------------------------------------------------------------
 // Register User---------------------------------------------------------------------------------------------------------
 router.post('/password',
 	passport.authenticate('local', { successRedirect: '/passwordchange', failureRedirect: '/password', failureFlash: true }),
 	function (req, res) {
 		res.redirect('/passwordchange');
 	});
+	// enter current password---------------------------------------------------------------------------------------------------------
 //password update handle ---------------------------------------------------------------------------------------------------------------------------------
 router.post('/passwordchange', (req, res) => {
 
@@ -153,10 +160,11 @@ var errors = req.validationErrors();
 //Change password---------------------------------------------------------------
 
 });
-// password User----------------------------------------------------------------------------------------------------------------------------------
+// password User---------------------------------------------------------------------------------------------------------------------------
+
 //Dashboard handle ------------------------------------------------------------------------------------------------------------------------
 router.post('/dashboard',(req, res) =>{
-var item = {_id, name, surname, age, email, imageProfile, username} = req.body;
+var item = {_id, name, surname, age, email, userImage, username} = req.body;
 let query = {_id:req.body._id}
 //Check required fields
 req.checkBody('name', 'Name is required').notEmpty();
@@ -165,27 +173,6 @@ req.checkBody('email', 'Email is required').notEmpty();
 req.checkBody('email', 'Email is not valid').isEmail();
 req.checkBody('username', 'Username is required').notEmpty();
 
-var form =new formidable.IncomingForm();
-form.parse(req);
-let reqPath= path.join(__dirname, '../');
-let newfilename;
-form.on('fileBegin', function(name, file){
-	file.path = reqPath+ 'public/upload/'+ req.user.username + file.name;
-	newfilename= req.user.username+ file.name;
-});
-form.on('file', function(name, file) {
-	User.findOneAndUpdate({
-		username: req.user.username
-	},
-	{
-		'userImage': newfilename
-	},
-	function(err, result){
-		if(err) {
-			console.log(err);
-		}
-	});
-});
 var errors = req.validationErrors();
 
 	if (errors) {
